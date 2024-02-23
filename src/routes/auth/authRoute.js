@@ -1,11 +1,11 @@
-const express = require('express');
+const { appRouter } = require('../indexRoute');
 const authController = require('../../controller/auth/authController');
 const { registerValidator } = require('../../middleware/validator/authValidator/registerValidator');
 const { loginValidator } = require('../../middleware/validator/authValidator/loginValidator');
 
-const route = express.Router();
+appRouter.post('/register', [registerValidator], authController.register);
+appRouter.post('/login', [loginValidator], authController.login);
+appRouter.delete('/logout', authController.logout);
+appRouter.get('/api/token', authController.refreshToken);
 
-route.post('/register', registerValidator, authController.register);
-route.post('/login', loginValidator, authController.login);
-
-module.exports = route;
+module.exports = appRouter;
