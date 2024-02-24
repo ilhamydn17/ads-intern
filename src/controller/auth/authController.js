@@ -4,13 +4,16 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const register = async (req, res) => { 
-    const { name, email, password, passwordConfirmation } = req.body;
+    const { name, phoneNumber, email, password, passwordConfirmation } = req.body;
     if (passwordConfirmation !== password) return res.status(400).json({ error: "Password confirmation does not match" });
+    const existUser = await User.findOne({ where: { email: email } });
+    if (existUser) return res.status(400).json({ message: 'email already registered' });
     const genSalt = await bcrypt.genSalt();
     const hashedPass = await bcrypt.hash(password, genSalt);
     try {
         await User.create({
             name: name,
+            phoneNumber: phoneNumber || null,
             email: email,
             password: hashedPass,
         });
@@ -62,20 +65,34 @@ const logout = async (req, res) => {
 const refreshToken = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;
-        if (!refreshToken) return res.status(400).json({ message: 'refresh token not found' });
+        if (refreshToken == null) {
+            res.status(400).json({ message: 'refresh token not found' });
+            return;
+        }
         const user = await User.findOne({ where: { refreshToken: refreshToken } });
-        if (!user) return res.status(400).json({ message: 'user not found' });
+        if (!user) {
+            res.status(400).json({ message: 'user not found' });
+            return; 
+        };
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, decoded) => {
-            if (err) return res.status(400).json({ message: 'refresh token not valid' });
+            if (err) {
+                if (err.name === 'TokenExpiredError') {
+                    res.status(401).json({ message: 'refresh token has expired' });
+                    return;
+                } else {
+                    res.status(400).json({ message: 'refresh token not valid' });
+                    return;
+                }
+            }
             const userId = user.id;
             const userName = user.name;
             const userEmail = user.email;
             const newAccessToken = jwt.sign({ userId, userName, userEmail }, process.env.ACCESS_TOKEN, { expiresIn: '1m' });
+            req.email = decoded.email;
             res.status(200).json({ message: 'success refresh token', accessToken: newAccessToken });
         });
     } catch (error) {
         console.log(`${error}`);
-        res.status(500).json({ message: 'internal server error' });
     }
     
 }
