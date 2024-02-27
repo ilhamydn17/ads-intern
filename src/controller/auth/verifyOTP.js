@@ -15,26 +15,30 @@ const verifyOTP = async (req, res) => {
       res.status(404).json({ message: 'invalid OTP' })
     }
 
-    console.log(validUser)
-
     // generate jwt token for user
     const userId = validUser.id
     const userEmail = validUser.email
     const userPassword = validUser.password
     const phoneNumber = validUser.phoneNumber
 
+    // generate access token with jwt
     const accessToken = jwt.sign(
       { userId, userEmail, userPassword, phoneNumber },
       process.env.ACCESS_TOKEN,
       { expiresIn: '30s' },
     )
+
+    // generate refresh token with jwt
     const refreshToken = jwt.sign(
       { userId, userEmail, userPassword },
       process.env.REFRESH_TOKEN,
       { expiresIn: '1m' },
     )
+
+    // update refresh token in user table
     await validUser.update({ refreshToken: refreshToken })
 
+    // set cookie for refresh token
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,

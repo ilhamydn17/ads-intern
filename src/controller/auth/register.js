@@ -1,20 +1,27 @@
 const { db } = require('../../models')
 const User = db.user
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const nodeCache = require('node-cache')
 
 const register = async (req, res) => {
+    // get data from body request
     const { name, phoneNumber, email, password, passwordConfirmation } = req.body
+
+    // validation password confirmation
     if (passwordConfirmation !== password)
         return res
         .status(400)
-        .json({ error: 'Password confirmation does not match' })
+            .json({ error: 'Password confirmation does not match' })
+    
+    // find existed user
     const existUser = await User.findOne({ where: { email: email } })
     if (existUser)
         return res.status(400).json({ message: 'email already registered' })
+
+    // hashing password
     const genSalt = await bcrypt.genSalt()
     const hashedPass = await bcrypt.hash(password, genSalt)
+
+    // create new user
     try {
         await User.create({
         name: name,
