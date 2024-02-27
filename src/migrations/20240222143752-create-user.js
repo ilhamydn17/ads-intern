@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       phoneNumber: {
-        type: Sequelize.STRING(13),
+        type: Sequelize.STRING(16),
         allowNull: true,
       },
       name: {
@@ -28,6 +28,10 @@ module.exports = {
       },
       refreshToken: {
         type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      otp: {
+        type: Sequelize.STRING(6),
         allowNull: true,
       },
       createdAt: {

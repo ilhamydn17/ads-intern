@@ -5,6 +5,7 @@ const database = require('./models/index');
 const dotenv = require('dotenv');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser')
 
 dotenv.config(path.resolve(__dirname, '../.env'));
 
@@ -12,6 +13,8 @@ const app = express();
 const port = 5000;
 database.checkConnectionDb();
 
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 app.use(express.json());
 app.use(cookieParser());
 
