@@ -26,4 +26,6 @@ model User {
   longitude Float?
   latitude Float?
   registration_date DateTime?
+  createdAt DateTime? @default(now()) 
+  updatedAt DateTime? @updatedAt 
 }

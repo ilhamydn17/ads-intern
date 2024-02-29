@@ -2,7 +2,7 @@ const { body } = require('express-validator');
 const { validating } = require('../indexValidator');
 
 const registerValidator = validating([
-    body('name', 'required name').not().isEmpty(),
+    body('username', 'required username').not().isEmpty(),
     body('email')
         .notEmpty().withMessage('Email is required')
         .isEmail().withMessage('Email must be a valid email')
