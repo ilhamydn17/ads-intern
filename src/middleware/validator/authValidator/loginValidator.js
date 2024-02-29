@@ -2,10 +2,9 @@ const { body } = require('express-validator');
 const { validating } = require('../indexValidator');
 
 const loginValidator = validating([
-    body('email')
-        .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Email must be a valid email')
-        .isString().withMessage('Email must be a string'),
+    // body('email')
+    //     .isEmail().withMessage('Email must be a valid email')
+    //     .isString().withMessage('Email must be a string'),
     // body('password')
     //     .notEmpty().withMessage('Password is required')
     //     .isString().withMessage('Password must be a string')

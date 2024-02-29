@@ -20,7 +20,7 @@ const login = async (req, res) => {
         }
       ]
     }
-  });
+  }).catch(err => { console.log(err); });
   if (!existedUser) {
     res.status(400).json({ message: 'invalid credential' });
     return;

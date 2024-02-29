@@ -1,7 +1,8 @@
 const { appRouter } = require('../indexRoute');
-const userController = require('../../controller/user/userController');
+const { getListUser, getUserProfile } = require('../../controller/user/userController');
 const { verifyToken } = require('../../middleware/auth/verifyToken');
 
-appRouter.get('/api/users', [verifyToken], userController.getListUser);
+appRouter.get('/api/users', [verifyToken], getListUser);
+appRouter.get('/api/user-profile', [verifyToken], getUserProfile);
 
 module.exports = appRouter;
