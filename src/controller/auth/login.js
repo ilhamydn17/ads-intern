@@ -5,32 +5,32 @@ const { otp } = require('../../utils/otpManager')
 const prisma = new PrismaClient();
 
 const login = async (req, res) => {
-  // get data from body request
-  const { phoneNumber, email, channel } = req.body;
-
-  // find existed user / validation user
-  const existedUser = await prisma.user.findFirst({
-    where: {
-      OR: [
-        {
-          phone_number: phoneNumber
-        },
-        {
-          email: email
-        }
-      ]
-    }
-  }).catch(err => { console.log(err); });
-  if (!existedUser) {
-    res.status(400).json({ message: 'invalid credential' });
-    return;
-  }
-
-  // ... verification password (optional)
-
   try {
+    // get data from body request
+    const { phoneNumber, email, channel } = req.body;
+
+    // find existed user / validation user
+    const existedUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          {
+            phone_number: phoneNumber
+          },
+          {
+            email: email
+          }
+        ]
+      }
+    }).catch(err => { console.log(err); });
+    if (!existedUser) {
+      res.status(400).json({ message: 'invalid credential' });
+      return;
+    }
+
+    // ... verification password (optional)
+
     // find existed OTP 
-    let newOtp = otp
+    let newOtp = otp;
     let existedOtp = await prisma.user.findFirst({ where: { otp_code: newOtp } });
     while (existedOtp) {
       newOtp = otp
