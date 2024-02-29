@@ -18,11 +18,11 @@ function sendOtpEmail(userEmail, nodeMailer, otp) {
     transporter.sendMail(mailOption, (err, info) => {
       if (err) {
         console.log(err)
-        reject({ error: err })
-        return
+        reject('error while sending email');
+        return;
       }
-      console.log('email has been sent', info)
-      resolve({ message: `OTP sent to ${info.accepted}]` })
+      console.log('email has been sent', info);
+      resolve(`OTP sent to ${info.accepted}`);
     })
   })
 }

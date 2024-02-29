@@ -1,13 +1,14 @@
-const { db } = require('../../models/index');
-const User = db.user;
+const { PrismaClient } = require('@prisma/client');
 
-const getListUser = async (req, res) => { 
+const prisma = new PrismaClient();
+
+const getListUser = async (req, res) => {
     try {
-        const users = await User.findAll({ attributes: ['id', 'name', 'email', 'phoneNumber'] });
-        return res.status(200).json({message: 'success', data: users});
+        const users = await prisma.user.findMany({ select: { username: true, email: true, phone_number: true } });
+        return res.status(200).json({ message: 'success', data: users });
     } catch (error) {
         console.log(`${error}`);
-        res.status(500).json({error: 'internal server error'});
+        res.status(500).json({ error: 'internal server error' });
     }
 }
 

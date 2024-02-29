@@ -11,6 +11,7 @@
   "author": "Ilham Yudantyo",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.10.2",
     "@sequelize/core": "^7.0.0-alpha.37",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -30,6 +31,7 @@
     "twilio": "^4.22.0"
   },
   "devDependencies": {
+    "prisma": "^5.10.2",
     "sequelize-cli": "^6.6.2"
   }
 }

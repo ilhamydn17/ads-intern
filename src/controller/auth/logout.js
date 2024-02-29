@@ -1,5 +1,7 @@
-const { db } = require('../../models')
-const User = db.loggedUser
+const { PrismaClient } = require('@prisma/client');
+const refreshToken = require('./refreshToken');
+
+const prisma = new PrismaClient();
 
 const logout = async (req, res) => {
   try {
@@ -8,13 +10,19 @@ const logout = async (req, res) => {
     if (!refreshTokenOnCookie) return res.status(204)
 
     // find user by refreshToken
-    const loggedUser = await User.findOne({
-      where: { refreshToken: refreshTokenOnCookie },
-    })
+    const loggedUser = await prisma.user.findFirst({ where: { refresh_token: refreshTokenOnCookie } });
     if (!loggedUser) return res.status(204)
 
     // update refreshToken and otp user become null
-    await loggedUser.update({ refreshToken: null, otp: null })
+    await prisma.user.update({
+      where: {
+        id: loggedUser.id
+      },
+      data: {
+        refresh_token: null,
+        otp_code: null
+      }
+    });
 
     // clear cookie for refreshToken
     res.clearCookie('refreshToken')

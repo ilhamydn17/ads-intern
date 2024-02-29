@@ -1,8 +1,7 @@
-const { db } = require('../../models')
-const User = db.user
-const bcrypt = require('bcrypt')
+const { PrismaClient, Prisma } = require('@prisma/client');
 const jwt = require('jsonwebtoken')
-const nodeCache = require('node-cache')
+
+const prisma = new PrismaClient();
 
 const refreshToken = async (req, res) => {
   try {
@@ -14,7 +13,7 @@ const refreshToken = async (req, res) => {
     }
 
     // validating refreshToken with logged user
-    const user = await User.findOne({ where: { refreshToken: refreshToken } })
+    const user = await prisma.user.findFirst({ where: { refresh_token: refreshToken } });
     if (!user) {
       res.status(400).json({ message: 'user not found' })
       return
@@ -33,23 +32,23 @@ const refreshToken = async (req, res) => {
       }
 
       // get information from logged user for jwt payload
-      const userId = user.id
-      const userName = user.name
-      const userEmail = user.email
-      
+      const userId = user.id;
+      const userName = user.name;
+      const userEmail = user.email;
+      const userPhone = user.phone_number;
+
       // make a new accessToken for logged user
       const newAccessToken = jwt.sign(
-        { userId, userName, userEmail },
+        { userId, userName, userEmail, userPhone },
         process.env.ACCESS_TOKEN,
         { expiresIn: '1m' },
       )
       req.email = decoded.email
-      res
-        .status(200)
-        .json({ message: 'success refresh token', accessToken: newAccessToken })
+      res.status(200).json({ message: 'success refresh token', accessToken: newAccessToken })
     })
   } catch (error) {
-    console.log(`${error}`)
+    console.log(`${error}`);
+    res.status(500).json({ message: 'internal server error' });
   }
 }
 

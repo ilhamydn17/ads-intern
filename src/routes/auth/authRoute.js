@@ -1,5 +1,5 @@
 const { appRouter } = require('../indexRoute');
-const { register, login, logout, refreshToken, verifyOTP } = require('../../controller/auth/index')
+const { register, login, logout, refreshToken, verifyOTP } = require('../../controller/auth/index');
 const { registerValidator } = require('../../middleware/validator/authValidator/registerValidator');
 const { loginValidator } = require('../../middleware/validator/authValidator/loginValidator');
 

@@ -1,34 +1,54 @@
-const { db } = require('../../models')
-const User = db.user
+const { PrismaClient } = require('@prisma/client');
 const { twoFactor } = require('../../services/auth/twoFactor')
 const { otp } = require('../../utils/otpManager')
 
+const prisma = new PrismaClient();
+
 const login = async (req, res) => {
   // get data from body request
-  const userPhone = req.body.phoneNumber
-  const userEmail = req.body.email
-  const requestChannel = req.body.channel
+  const { phoneNumber, email, channel } = req.body;
 
   // find existed user / validation user
-  const existedUser = await User.findOne({ where: [{ phoneNumber: userPhone }, { email: userEmail },] });
-  if (!existedUser) { return res.status(400).json({ message: 'invalid credential' }) }
+  const existedUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        {
+          phone_number: phoneNumber
+        },
+        {
+          email: email
+        }
+      ]
+    }
+  });
+  if (!existedUser) {
+    res.status(400).json({ message: 'invalid credential' });
+    return;
+  }
 
   // ... verification password (optional)
 
   try {
     // find existed OTP 
     let newOtp = otp
-    let existedOtp = await User.findOne({ where: { otp: newOtp } })
+    let existedOtp = await prisma.user.findFirst({ where: { otp_code: newOtp } });
     while (existedOtp) {
       newOtp = otp
-      existedOtp = await User.findOne({ where: { otp: newOtp } })
+      existedOtp = await prisma.user.findFirst({ where: { otp_code: newOtp } });
     }
 
     // update otp field in user table with new otp
-    await existedUser.update({ otp: newOtp })
+    await prisma.user.update({
+      where: {
+        id: existedUser.id
+      },
+      data: {
+        otp_code: newOtp
+      }
+    })
 
     // send OTP code to user with 2FA (custom service)
-    twoFactor(requestChannel, newOtp, existedUser.phoneNumber, existedUser.email)
+    twoFactor(channel, newOtp, existedUser.phone_number, existedUser.email)
       .then((message) => {
         console.log(message)
         res.status(200).json({ message })
