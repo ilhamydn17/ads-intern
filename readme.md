@@ -9,4 +9,4 @@ npm run dev
 ```
 
 ## Dokumentasi API
-[text](https://documenter.getpostman.com/view/27399849/2sA2rGwKkq)
+[REST API Documentation with Postman ](https://documenter.getpostman.com/view/27399849/2sA2rGwKkq)
