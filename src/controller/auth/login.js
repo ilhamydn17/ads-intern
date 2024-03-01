@@ -1,6 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const { twoFactor } = require('../../services/auth/twoFactor')
 const { otp } = require('../../utils/otpManager')
+const twilio = require('twilio')(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN,
+)
 
 const prisma = new PrismaClient();
 
@@ -48,14 +52,12 @@ const login = async (req, res) => {
     })
 
     // send OTP code to user with 2FA (custom service)
-    twoFactor(channel, newOtp, existedUser.phone_number, existedUser.email)
+    twoFactor(channel, newOtp, phoneNumber, email)
       .then((message) => {
-        console.log(message)
         res.status(200).json({ message })
       })
       .catch((message) => {
-        console.log(message)
-        res.status(500).json({ message })
+        res.status(500).json({ message });
       })
   } catch (error) {
     console.log(error)

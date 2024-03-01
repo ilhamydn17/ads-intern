@@ -11,8 +11,8 @@ const register = async (req, res) => {
     if (passwordConfirmation !== password) return res.status(400).json({ error: 'Password confirmation does not match' });
 
     // find existed user
-    const existUser = await prisma.user.findUnique({ where: { email: email } });
-    if (existUser) return res.status(400).json({ message: 'email already registered' })
+    const existUser = await prisma.user.findFirst({ where: { OR: [{ email }, { phone_number: phoneNumber }] } });
+    if (existUser) return res.status(400).json({ message: 'data already registered' })
 
     // hashing password
     const genSalt = await bcrypt.genSalt()

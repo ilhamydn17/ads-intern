@@ -7,7 +7,7 @@ const logout = async (req, res) => {
   try {
     // get information refreshToken from cookie
     const refreshTokenOnCookie = req.cookies.refreshToken
-    if (!refreshTokenOnCookie) return res.status(204)
+    if (!refreshTokenOnCookie) return res.sendStatus(400);
 
     // find user by refreshToken
     const loggedUser = await prisma.user.findFirst({ where: { refresh_token: refreshTokenOnCookie } });
@@ -25,12 +25,12 @@ const logout = async (req, res) => {
     });
 
     // clear cookie for refreshToken
-    res.clearCookie('refreshToken')
+    res.clearCookie('refreshToken');
 
-    res.status(204).json({ message: 'Logout success' })
+    res.status(204).json({ message: 'Logout success' });
   } catch (error) {
-    console.log(`error: ${error}`)
-    res.status(500).json('message : internal server error')
+    console.log(`error: ${error}`);
+    res.status(500).json('message : internal server error');
   }
 }
 
