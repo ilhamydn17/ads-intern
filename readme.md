@@ -7,3 +7,6 @@ npm install
 ```
 npm run dev
 ```
+
+## Dokumentasi API
+[text](https://documenter.getpostman.com/view/27399849/2sA2rGwKkq)
