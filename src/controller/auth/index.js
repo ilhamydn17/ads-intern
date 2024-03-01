@@ -1,8 +1,3 @@
-// const login = require('./login');
-// const register = require('./register');
-// const logout = require('./logout');
-// const refreshToken = require('./refreshToken');
-// const verifyOTP = require('./verifyOTP');
 const fs = require('fs');
 const path = require('path');
 
@@ -21,14 +16,5 @@ class AuthController {
         });
     }
 }
-
-
-// module.exports = {
-//     login,
-//     register,
-//     logout,
-//     refreshToken,
-//     verifyOTP
-// }
 
 module.exports = { AuthController: new AuthController() };

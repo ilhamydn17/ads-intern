@@ -26,8 +26,9 @@ const logout = async (req, res) => {
 
     // clear cookie for refreshToken
     res.clearCookie('refreshToken');
-
-    res.status(204).json({ message: 'Logout success' });
+    
+    // return success status
+    res.sendStatus(204);
   } catch (error) {
     console.log(`error: ${error}`);
     res.status(500).json('message : internal server error');
