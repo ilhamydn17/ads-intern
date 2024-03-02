@@ -12,11 +12,12 @@ dotenv.config();
 const app = express();
 const port = 5000;
 
-// applicationa middlewares
+// applications middlewares
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static('./storage/public'));
 
 // app Route
 app.use(authController);
